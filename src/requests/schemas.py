@@ -23,7 +23,7 @@ class Asignacion(BaseModel):
     grimorio_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Solicitud(SolicitudBase):
     id: int
@@ -31,4 +31,4 @@ class Solicitud(SolicitudBase):
     assignments: List[Asignacion] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
