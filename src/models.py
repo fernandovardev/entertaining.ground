@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
-from src.database import Base
+from sqlalchemy.orm import relationship, declarative_base
+from src.database import engine
+
+Base = declarative_base()
 
 class Status(Base):
     __tablename__ = "status"
@@ -46,3 +48,4 @@ class Asignacion(Base):
 
     solicitud = relationship("Solicitud", back_populates="assignments")
     grimorio = relationship("Grimorio")
+Base.metadata.create_all(bind=engine)

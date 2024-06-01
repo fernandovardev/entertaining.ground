@@ -1,3 +1,4 @@
+# schemas.py
 from pydantic import BaseModel, Field
 from typing import Optional, List
 
@@ -15,11 +16,11 @@ class SolicitudUpdate(SolicitudBase):
     pass
 
 class SolicitudStatusUpdate(BaseModel):
-    status: str
+    status: int
 
 class Solicitud(SolicitudBase):
     id: int
-    status: str
+    status: int
     assignments: List['Asignacion']
 
     class Config:

@@ -1,7 +1,7 @@
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.exc import IntegrityError
 from json import load
-from .database import engine, Base, SessionLocal
+from .database import engine, SessionLocal
 from .models import *
 import os
 

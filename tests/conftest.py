@@ -6,33 +6,40 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
+from contextlib import contextmanager
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
-from src.main import app
-from src.database import Base, SessionLocal
+from src.database import *
 import pytest
+
+DATABASE_URL= "sqlite:///./test.db"
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+from src.main import app, models
+
 
 client = TestClient(app)
 
-@pytest.fixture(scope="session", autouse=True)
-def setup_database():
-    engine = create_engine(os.getenv("DATABASE_URL", "sqlite:///./test.db"))
-    Base.metadata.create_all(bind=engine)
-    yield
+@pytest.fixture(scope="module")
+def setup_db():
+    models.Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @pytest.fixture(scope="function", autouse=True)
 def setup_db():
     db = SessionLocal()
     try:
-        db.execute(text("DELETE FROM asignaciones"))
-        db.execute(text("DELETE FROM solicitudes"))
-        db.execute(text("DELETE FROM grimorios"))
-        db.execute(text("DELETE FROM afinidades_magicas"))
+        db.execute(text("INSERT INTO status (name) VALUES ('pending')"))
         db.execute(text("INSERT INTO afinidades_magicas (nombre) VALUES ('Fire')"))
         db.execute(text("INSERT INTO grimorios (tipo, rareza, peso) VALUES ('Trébol de cinco hojas', 'raro', 2)"))
         db.execute(text("""
-            INSERT INTO solicitudes (nombre, apellido, identificacion, edad, afinidad_magica_id, status)
-            VALUES ('Test', 'User', 'TEST123', 25, 1, 'pending')
+            INSERT INTO solicitudes (nombre, apellido, identificacion, edad, afinidad_magica_id, status_id)
+            VALUES ('Test', 'User', 'TEST123', 25, 1, 1)
         """))
         db.commit()
     except IntegrityError:
