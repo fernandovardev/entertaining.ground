@@ -1,0 +1,7 @@
+[
+    {"tipo": "Trébol de una hoja", "rareza": "común", "peso": 50},
+    {"tipo": "Trébol de dos hojas", "rareza": "común", "peso": 30},
+    {"tipo": "Trébol de tres hojas", "rareza": "poco habitual", "peso": 15},
+    {"tipo": "Trébol de cuatro hojas", "rareza": "inusual", "peso": 4},
+    {"tipo": "Trébol de cinco hojas", "rareza": "muy raro", "peso": 1}
+]

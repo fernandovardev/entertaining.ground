@@ -1,1 +1,8 @@
 fastapi
+uvicorn
+sqlalchemy
+pydantic
+mysql-connector-python==8.0.26
+python-dotenv
+pytest
+pytest-asyncio
