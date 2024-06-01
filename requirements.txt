@@ -6,3 +6,4 @@ mysql-connector-python==8.0.26
 python-dotenv
 pytest
 pytest-asyncio
+sqlalchemy_utils

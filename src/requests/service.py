@@ -1,16 +1,12 @@
-
-from src.database import SessionLocal
-from src.affinities.service import update_afinidad_magica, create_afinidad_magica
-from src.grimoires.service import update_grimorio, create_grimorio
-from src.affinities.schemas import AfinidadMagicaCreate
-from src.grimoires.schemas import GrimorioCreate
 from sqlalchemy.orm import Session
-from ..models import Solicitud, Grimorio, Asignacion, StatusEnum, AfinidadMagica
+from ..models import Solicitud, Grimorio, Asignacion, Status, AfinidadMagica
 from .schemas import SolicitudCreate, SolicitudUpdate
 from fastapi import HTTPException
 import random
 import logging
+import os
 from json import load
+
 logger = logging.getLogger(__name__)
 
 def get_solicitud(db: Session, solicitud_id: int):
@@ -24,7 +20,8 @@ def get_solicitudes(db: Session, skip: int = 0, limit: int = 100):
 
 def create_solicitud(db: Session, solicitud: SolicitudCreate):
     try:
-        db_solicitud = Solicitud(**solicitud.dict(), status=StatusEnum.PENDING)
+        status_pending = db.query(Status).filter(Status.name == "PENDING").first()
+        db_solicitud = Solicitud(**solicitud.dict(), status_id=status_pending.id)
         db.add(db_solicitud)
         db.commit()
         db.refresh(db_solicitud)
@@ -77,27 +74,3 @@ def assign_grimorio(db: Session, solicitud_id: int):
         db.rollback()
         logger.error(f"Failed to assign grimorio: {e}")
         raise
-
-
-def load_initial_data():
-    db = SessionLocal()
-    try:
-        with open('src/data/affinities.json') as affinities_file:
-            affinities_data = load(affinities_file)
-            for affinity_data in affinities_data:
-                afinidad = db.query(AfinidadMagica).filter(AfinidadMagica.nombre == affinity_data["nombre"]).first()
-                if afinidad:
-                    update_afinidad_magica(db, afinidad.id, AfinidadMagicaCreate(**affinity_data))
-                else:
-                    create_afinidad_magica(db, AfinidadMagicaCreate(**affinity_data))
-        
-        with open('src/data/grimoires.json') as grimoires_file:
-            grimoires_data = load(grimoires_file)
-            for grimorio_data in grimoires_data:
-                grimorio = db.query(Grimorio).filter(Grimorio.tipo == grimorio_data["tipo"]).first()
-                if grimorio:
-                    update_grimorio(db, grimorio.id, GrimorioCreate(**grimorio_data))
-                else:
-                    create_grimorio(db, GrimorioCreate(**grimorio_data))
-    finally:
-        db.close()

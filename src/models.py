@@ -1,13 +1,12 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum as SAEnum
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-import enum
-Base = declarative_base()
+from src.database import Base
 
-class StatusEnum(str, enum.Enum):
-    PENDING = "pending"
-    APPROVED = "approved"
-    REJECTED = "rejected"
+class Status(Base):
+    __tablename__ = "status"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(20), unique=True, nullable=False)
 
 class Solicitud(Base):
     __tablename__ = "solicitudes"
@@ -18,11 +17,11 @@ class Solicitud(Base):
     identificacion = Column(String(10), unique=True, index=True)
     edad = Column(Integer)
     afinidad_magica_id = Column(Integer, ForeignKey('afinidades_magicas.id'))
-    status = Column(SAEnum(StatusEnum), default=StatusEnum.PENDING)
+    status_id = Column(Integer, ForeignKey('status.id'))
 
     afinidad_magica = relationship("AfinidadMagica")
+    status = relationship("Status")
     assignments = relationship("Asignacion", back_populates="solicitud")
-
 
 class AfinidadMagica(Base):
     __tablename__ = "afinidades_magicas"
@@ -37,7 +36,6 @@ class Grimorio(Base):
     tipo = Column(String(50), unique=True, index=True)
     rareza = Column(String(20))
     peso = Column(Integer)
-
 
 class Asignacion(Base):
     __tablename__ = "asignaciones"

@@ -1,30 +1,33 @@
 import random
 import string
+import sys
+import os
 from fastapi.testclient import TestClient
-from src.main import app
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
-from src.database import Base
-import pytest
 
-SQLALCHEMY_DATABASE_TEST_URL = "sqlite:///./test.db"
-test_engine = create_engine(SQLALCHEMY_DATABASE_TEST_URL)
-TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
+from src.main import app
+from src.database import Base, SessionLocal
+import pytest
 
 client = TestClient(app)
 
-Base.metadata.create_all(bind=test_engine)
+@pytest.fixture(scope="session", autouse=True)
+def setup_database():
+    engine = create_engine(os.getenv("DATABASE_URL", "sqlite:///./test.db"))
+    Base.metadata.create_all(bind=engine)
+    yield
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="function", autouse=True)
 def setup_db():
-    db = TestSessionLocal()
+    db = SessionLocal()
     try:
         db.execute(text("DELETE FROM asignaciones"))
         db.execute(text("DELETE FROM solicitudes"))
         db.execute(text("DELETE FROM grimorios"))
         db.execute(text("DELETE FROM afinidades_magicas"))
-
         db.execute(text("INSERT INTO afinidades_magicas (nombre) VALUES ('Fire')"))
         db.execute(text("INSERT INTO grimorios (tipo, rareza, peso) VALUES ('Trébol de cinco hojas', 'raro', 2)"))
         db.execute(text("""

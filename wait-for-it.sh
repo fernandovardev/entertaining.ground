@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-# Use this script to test if a given TCP host/port are available
-
+#!/bin/bash
 TIMEOUT=60
 DELAY=5
 
