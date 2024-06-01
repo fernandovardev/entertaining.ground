@@ -35,7 +35,7 @@ def update_solicitud_status(id: int, solicitud: schemas.SolicitudStatusUpdate, d
         db_solicitud = service.get_solicitud(db, solicitud_id=id)
         if not db_solicitud:
             raise APIException(status_code=404, detail="Solicitud no encontrada")
-        db_solicitud.status = solicitud.status
+        db_solicitud.status_id = solicitud.status
         db.commit()
         db.refresh(db_solicitud)
         return db_solicitud

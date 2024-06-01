@@ -9,6 +9,8 @@ class Status(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(20), unique=True, nullable=False)
+    
+    solicitudes = relationship("Solicitud", back_populates="status")
 
 class Solicitud(Base):
     __tablename__ = "solicitudes"
@@ -27,9 +29,11 @@ class Solicitud(Base):
 
 class AfinidadMagica(Base):
     __tablename__ = "afinidades_magicas"
-
+    
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(20), unique=True, index=True)
+    nombre = Column(String(20), unique=True, nullable=False)
+    
+    solicitudes = relationship("Solicitud", back_populates="afinidad_magica")
 
 class Grimorio(Base):
     __tablename__ = "grimorios"
@@ -38,6 +42,8 @@ class Grimorio(Base):
     tipo = Column(String(50), unique=True, index=True)
     rareza = Column(String(20))
     peso = Column(Integer)
+
+    assignments = relationship("Asignacion", back_populates="grimorio")
 
 class Asignacion(Base):
     __tablename__ = "asignaciones"
@@ -48,4 +54,3 @@ class Asignacion(Base):
 
     solicitud = relationship("Solicitud", back_populates="assignments")
     grimorio = relationship("Grimorio")
-Base.metadata.create_all(bind=engine)

@@ -23,12 +23,13 @@ client = TestClient(app)
 
 @pytest.fixture(scope="module")
 def setup_db():
-    models.Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+        os.remove("./test.db")
+
 
 @pytest.fixture(scope="function", autouse=True)
 def setup_db():

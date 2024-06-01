@@ -11,4 +11,4 @@ env/
 *.swp
 .git/
 .gitignore
-
+tests/

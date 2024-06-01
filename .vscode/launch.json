@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: pytest",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\.venv\\Scripts\\pytest.exe",  // Path to your pytest executable in the virtual environment
+            "args": [
+                "--capture=no",  // This ensures that stdout/stderr is not captured
+                "-s",  // Shortcut for `--capture=no`
+                "${workspaceFolder}\\tests"  // Path to your tests directory
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"  // This ensures your source files are on the Python path
+            },
+            "envFile": "${workspaceFolder}\\.env"  // Optional: path to a file containing environment variables
+        }
+    ]
+}
