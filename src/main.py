@@ -5,6 +5,7 @@ from . import models, database
 from src.affinities.router import router as affinities_router
 from src.grimoires.router import router as grimoires_router
 from src.requests.router import router as requests_router
+from src.ui.router import router as ui_router
 from src.deps import create_tables_and_load_data
 from src.logger import logger
 
@@ -40,3 +41,4 @@ async def log_exceptions(request: Request, call_next):
 app.include_router(affinities_router, prefix="/api")
 app.include_router(grimoires_router, prefix="/api")
 app.include_router(requests_router, prefix="/api")
+app.include_router(ui_router, prefix="/")
