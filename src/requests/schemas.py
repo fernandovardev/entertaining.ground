@@ -5,7 +5,7 @@ class SolicitudBase(BaseModel):
     nombre: str = Field(..., max_length=20, pattern="^[a-zA-Z]+$")
     apellido: str = Field(..., max_length=20, pattern="^[a-zA-Z]+$")
     identificacion: str = Field(..., max_length=10)
-    edad: int = Field(..., ge=10, le=99)
+    edad: int = Field(..., ge=10, le=99) #Entero de 2 dígitos
     afinidad_magica_id: int
 
 class SolicitudCreate(SolicitudBase):
@@ -27,7 +27,7 @@ class Asignacion(BaseModel):
 
 class Solicitud(SolicitudBase):
     id: int
-    status_id: int  # Change status to status_id
+    status_id: int
     assignments: List[Asignacion] = []
 
     class Config:

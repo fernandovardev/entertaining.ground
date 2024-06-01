@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from ..database import get_db
 from . import service, schemas
-from ..logger import APIException
+from ..logger import logger, APIException
 
 router = APIRouter()
 
@@ -18,6 +18,9 @@ def create_solicitud(solicitud: schemas.SolicitudCreate, db: Session = Depends(g
         return solicitud
     except APIException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
+    except Exception as e:
+        logger.error(f"Unhandled exception: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.put("/solicitudes/{id}", response_model=schemas.Solicitud)
 def update_solicitud(id: int, solicitud: schemas.SolicitudUpdate, db: Session = Depends(get_db)):
@@ -28,6 +31,9 @@ def update_solicitud(id: int, solicitud: schemas.SolicitudUpdate, db: Session = 
         return service.update_solicitud(db=db, solicitud_id=id, solicitud=solicitud)
     except APIException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
+    except Exception as e:
+        logger.error(f"Unhandled exception: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.patch("/solicitudes/{id}/estatus", response_model=schemas.Solicitud)
 def update_solicitud_status(id: int, solicitud: schemas.SolicitudStatusUpdate, db: Session = Depends(get_db)):
@@ -41,10 +47,17 @@ def update_solicitud_status(id: int, solicitud: schemas.SolicitudStatusUpdate, d
         return db_solicitud
     except APIException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
+    except Exception as e:
+        logger.error(f"Unhandled exception: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.get("/solicitudes/", response_model=List[schemas.Solicitud])
 def read_solicitudes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return service.get_solicitudes(db, skip=skip, limit=limit)
+    try:
+        return service.get_solicitudes(db, skip=skip, limit=limit)
+    except Exception as e:
+        logger.error(f"Unhandled exception: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.delete("/solicitudes/{id}", response_model=schemas.Solicitud)
 def delete_solicitud(id: int, db: Session = Depends(get_db)):
@@ -55,3 +68,6 @@ def delete_solicitud(id: int, db: Session = Depends(get_db)):
         return service.delete_solicitud(db=db, solicitud_id=id)
     except APIException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
+    except Exception as e:
+        logger.error(f"Unhandled exception: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
