@@ -2,11 +2,11 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 from json import dumps
 from . import models, database
-from .affinities.router import router as affinities_router
-from .grimoires.router import router as grimoires_router
-from .requests.router import router as requests_router
-from .deps import create_tables_and_load_data
-from .logger import logger
+from src.affinities.router import router as affinities_router
+from src.grimoires.router import router as grimoires_router
+from src.requests.router import router as requests_router
+from src.deps import create_tables_and_load_data
+from src.logger import logger
 
 models.Base.metadata.create_all(bind=database.engine)
 app = FastAPI()
