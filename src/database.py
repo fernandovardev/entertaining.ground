@@ -4,7 +4,8 @@ from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 import os
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+DATABASE_URL = os.getenv("DATABASE_URL", DATABASE_URL = "sqlite:///:memory:"
+)
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
