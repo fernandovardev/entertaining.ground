@@ -41,4 +41,4 @@ async def log_exceptions(request: Request, call_next):
 app.include_router(affinities_router, prefix="/api")
 app.include_router(grimoires_router, prefix="/api")
 app.include_router(requests_router, prefix="/api")
-app.include_router(ui_router, prefix="/")
+app.include_router(ui_router, prefix="")
