@@ -4,7 +4,12 @@ from json import load
 from .database import engine, SessionLocal
 from .models import *
 import os
+from fastapi import Request
+from fastapi.responses import RedirectResponse
 
+def has_solved_riddle(request: Request):
+    if not request.session.get("riddle_solved"):
+        return RedirectResponse(url="/riddle-fail", status_code=303)
 
 def load_data_from_json(db, model_class, file_name):
     with open(file_name) as file:

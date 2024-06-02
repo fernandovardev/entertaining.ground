@@ -1,53 +1,71 @@
-from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ..database import get_db
-from . import schemas, service
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from ..models import Grimorio
+from .schemas import GrimorioCreate
 from ..logger import logger, APIException
 
-router = APIRouter()
 
-@router.get("/grimorios/", response_model=list[schemas.Grimorio])
-def read_grimorios(db: Session = Depends(get_db)):
-    logger.info("Request to fetch all grimorios")
+def get_grimorios(db: Session):
+    logger.info("Fetching all grimorios from database")
     try:
-        return service.get_grimorios(db)
-    except Exception as e:
-        logger.error(f"Unhandled exception: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        grimorios = db.query(Grimorio).all()
+        logger.info(f"Fetched {len(grimorios)} grimorios")
+        return grimorios
+    except SQLAlchemyError as e:
+        logger.error(f"Error al obtener grimorios: {e}")
+        raise APIException(status_code=500, detail="Error al obtener grimorios")
 
-@router.get("/grimorios/{grimorio_id}", response_model=schemas.Grimorio)
-def read_grimorio(grimorio_id: int, db: Session = Depends(get_db)):
-    logger.info(f"Request to fetch grimorio with ID {grimorio_id}")
+def get_grimorio(db: Session, grimorio_id: int):
+    logger.info(f"Fetching grimorio with ID {grimorio_id}")
     try:
-        db_grimorio = service.get_grimorio(db, grimorio_id)
-        if not db_grimorio:
+        grimorio = db.query(Grimorio).filter(Grimorio.id == grimorio_id).first()
+        if not grimorio:
             logger.warning(f"Grimorio con ID {grimorio_id} no encontrado")
             raise APIException(status_code=404, detail="Grimorio no encontrado")
+        logger.info(f"Fetched grimorio: {grimorio}")
+        return grimorio
+    except SQLAlchemyError as e:
+        logger.error(f"Error al obtener grimorio con ID {grimorio_id}: {e}")
+        raise APIException(status_code=500, detail="Error al obtener grimorio")
+
+def create_grimorio(db: Session, grimorio: GrimorioCreate):
+    logger.info(f"Creating new grimorio with data: {grimorio}")
+    db_grimorio = Grimorio(**grimorio.dict())
+    try:
+        db.add(db_grimorio)
+        db.commit()
+        db.refresh(db_grimorio)
+        logger.info(f"Created grimorio: {db_grimorio}")
         return db_grimorio
-    except APIException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
-    except Exception as e:
-        logger.error(f"Unhandled exception: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+    except IntegrityError as e:
+        db.rollback()
+        logger.error(f"Failed to create grimorio due to IntegrityError: {e}")
+        raise APIException(status_code=400, detail="Error al crear grimorio, el grimorio ya existe")
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(f"Failed to create grimorio: {e}")
+        raise APIException(status_code=500, detail="Error al crear grimorio")
 
-@router.post("/grimorios/", response_model=schemas.Grimorio)
-def create_grimorio(grimorio: schemas.GrimorioCreate, db: Session = Depends(get_db)):
-    logger.info(f"Request to create grimorio with data: {grimorio}")
+def update_grimorio(db: Session, grimorio_id: int, grimorio_data: GrimorioCreate):
+    logger.info(f"Updating grimorio with ID {grimorio_id} with data: {grimorio_data}")
     try:
-        return service.create_grimorio(db, grimorio)
-    except APIException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
-    except Exception as e:
-        logger.error(f"Unhandled exception: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        grimorio = db.query(Grimorio).filter(Grimorio.id == grimorio_id).first()
+        if not grimorio:
+            logger.warning(f"Grimorio con ID {grimorio_id} no encontrado")
+            raise APIException(status_code=404, detail="Grimorio no encontrado")
 
-@router.put("/grimorios/{grimorio_id}", response_model=schemas.Grimorio)
-def update_grimorio(grimorio_id: int, grimorio: schemas.GrimorioCreate, db: Session = Depends(get_db)):
-    logger.info(f"Request to update grimorio with ID {grimorio_id} with data: {grimorio}")
-    try:
-        return service.update_grimorio(db, grimorio_id, grimorio)
-    except APIException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
-    except Exception as e:
-        logger.error(f"Unhandled exception: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        for key, value in grimorio_data.dict().items():
+            setattr(grimorio, key, value)
+
+        db.commit()
+        db.refresh(grimorio)
+        logger.info(f"Updated grimorio: {grimorio}")
+        return grimorio
+    except IntegrityError as e:
+        db.rollback()
+        logger.error(f"Failed to update grimorio due to IntegrityError: {e}")
+        raise APIException(status_code=400, detail="Error al actualizar grimorio, datos duplicados")
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(f"Failed to update grimorio: {e}")
+        raise APIException(status_code=500, detail="Error al actualizar grimorio")

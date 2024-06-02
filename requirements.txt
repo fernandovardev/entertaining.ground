@@ -1,9 +1,11 @@
-fastapi
-uvicorn
-sqlalchemy
-pydantic
+fastapi==0.79.0
+uvicorn==0.17.6
+sqlalchemy==1.4.39
+pydantic==1.9.0
 mysql-connector-python==8.0.26
-python-dotenv
-pytest
-pytest-asyncio
-sqlalchemy_utils
+python-dotenv==0.19.2
+pytest==7.1.2
+pytest-asyncio==0.18.3
+sqlalchemy_utils==0.38.3
+jinja2==3.1.2
+ fastapi-session==0.2.7

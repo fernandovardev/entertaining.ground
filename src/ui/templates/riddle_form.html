@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Acertijo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="pergamino">
+        <h1>Resuelve el Acertijo</h1>
+        <form action="/riddle" method="post">
+            <label for="answer">¿Cuál es la respuesta a la vida, el universo y todo lo demás?</label>
+            <input type="text" id="answer" name="answer" required>
+            <button type="submit" class="boton">Enviar</button>
+        </form>
+        <div id="response"></div>
+    </div>
+</body>
+</html>
