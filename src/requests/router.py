@@ -14,7 +14,7 @@ def create_solicitud(solicitud: schemas.SolicitudCreate, db: Session = Depends(g
         if db_solicitud:
             raise APIException(status_code=400, detail="Identificación ya registrada")
         solicitud = service.create_solicitud(db=db, solicitud=solicitud)
-        service.assign_grimorio(db=db, solicitud_id=solicitud.id)
+        service.assign_grimorio(db=db, solicitud_data=solicitud)
         return solicitud
     except APIException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)

@@ -8,6 +8,7 @@ def get_afinidades_magicas(db: Session):
     logger.info("Fetching all afinidades magicas from database")
     try:
         afinidades = db.query(AfinidadMagica).all()
+        afinidades = [afinidad.serialize() for afinidad in afinidades]
         logger.info(f"Fetched {len(afinidades)} afinidades magicas")
         return afinidades
     except SQLAlchemyError as e:
@@ -19,10 +20,10 @@ def get_afinidad_magica(db: Session, afinidad_id: int):
     try:
         afinidad = db.query(AfinidadMagica).filter(AfinidadMagica.id == afinidad_id).first()
         if not afinidad:
-            logger.warning(f"Afinidad mágica with ID {afinidad_id} no encontrada")
+            logger.warning(f"Afinidad mágica con ID {afinidad_id} no encontrada")
             raise APIException(status_code=404, detail="Afinidad Mágica no encontrada")
-        logger.info(f"Fetched afinidad mágica: {afinidad}")
-        return afinidad
+        logger.info(f"Fetched afinidad mágica: {afinidad.serialize()}")
+        return afinidad.serialize()
     except SQLAlchemyError as e:
         logger.error(f"Error al obtener afinidad mágica con ID {afinidad_id}: {e}")
         raise APIException(status_code=500, detail="Error al obtener afinidad mágica")
@@ -34,8 +35,8 @@ def create_afinidad_magica(db: Session, afinidad: AfinidadMagicaCreate):
         db.add(db_afinidad)
         db.commit()
         db.refresh(db_afinidad)
-        logger.info(f"Created afinidad mágica: {db_afinidad}")
-        return db_afinidad
+        logger.info(f"Created afinidad mágica: {db_afinidad.serialize()}")
+        return db_afinidad.serialize()
     except IntegrityError as e:
         db.rollback()
         logger.error(f"Failed to create afinidad mágica due to IntegrityError: {e}")
@@ -50,7 +51,7 @@ def update_afinidad_magica(db: Session, afinidad_id: int, afinidad_data: Afinida
     try:
         afinidad = db.query(AfinidadMagica).filter(AfinidadMagica.id == afinidad_id).first()
         if not afinidad:
-            logger.warning(f"Afinidad mágica with ID {afinidad_id} no encontrada")
+            logger.warning(f"Afinidad mágica con ID {afinidad_id} no encontrada")
             raise APIException(status_code=404, detail="Afinidad Mágica no encontrada")
 
         for key, value in afinidad_data.dict().items():
@@ -58,8 +59,8 @@ def update_afinidad_magica(db: Session, afinidad_id: int, afinidad_data: Afinida
 
         db.commit()
         db.refresh(afinidad)
-        logger.info(f"Updated afinidad mágica: {afinidad}")
-        return afinidad
+        logger.info(f"Updated afinidad mágica: {afinidad.serialize()}")
+        return afinidad.serialize()
     except IntegrityError as e:
         db.rollback()
         logger.error(f"Failed to update afinidad mágica due to IntegrityError: {e}")

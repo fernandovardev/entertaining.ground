@@ -1,11 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Secure Page</title>
+    <title>¡Acertijo Resuelto!</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <script>
+        async function fetchAfinidades() {
+            const response = await fetch('/api/afinidades/');
+            const data = await response.json();
+            const select = document.getElementById('afinidad_magica_id');
+            data.forEach(afinidad => {
+                const option = document.createElement('option');
+                option.value = afinidad.id;
+                option.textContent = afinidad.nombre;
+                select.appendChild(option);
+            });
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {};
+
+            formData.forEach((value, key) => {
+                data[key] = value.trim() !== "" ? value : null;
+            });
+
+            const response = await fetch('/api/solicitudes/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                alert('Solicitud enviada exitosamente.');
+                form.reset();
+            } else {
+                const errorData = await response.json();
+                alert('Error al enviar solicitud: ' + errorData.detail);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAfinidades);
+    </script>
 </head>
 <body>
-    <h1>Bienvenido, {{ user }}</h1>
-    <p>Has accedido a la página segura.</p>
+    <div class="pergamino">
+        <h1>¡Acertijo Resuelto!</h1>
+        <p>Has demostrado tu sabiduría al resolver el acertijo. Ahora tienes acceso a los secretos mejor guardados.</p>
+        <form id="solicitudForm" onsubmit="handleSubmit(event)">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" required>
+            
+            <label for="identificacion">Identificación:</label>
+            <input type="text" id="identificacion" name="identificacion" required>
+            
+            <label for="edad">Edad:</label>
+            <input type="number" id="edad" name="edad" required>
+            
+            <label for="afinidad_magica_id">Afinidad Mágica:</label>
+            <select id="afinidad_magica_id" name="afinidad_magica_id" required>
+                <!-- Options will be populated by fetchAfinidades() -->
+            </select>
+            
+            <button type="submit" class="boton">Enviar Solicitud</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -8,6 +8,7 @@ class AfinidadMagicaBase(BaseModel):
     Atributos:
         nombre (str): El nombre de la afinidad mágica, un reflejo de su esencia.
     """
+    id: int
     nombre: str
 
 class AfinidadMagicaCreate(AfinidadMagicaBase):

@@ -11,32 +11,35 @@ def get_solicitud(db: Session, solicitud_id: int):
     if not solicitud:
         logger.warning(f"Solicitud con ID {solicitud_id} no encontrada")
         raise APIException(status_code=404, detail="Solicitud no encontrada")
-    logger.info(f"Fetched solicitud: {solicitud}")
-    return solicitud
+    logger.info(f"Fetched solicitud: {solicitud.serialize()}")
+    return solicitud.serialize()
 
 def get_solicitud_by_identificacion(db: Session, identificacion: str):
     logger.info(f"Fetching solicitud with identificacion {identificacion}")
     solicitud = db.query(Solicitud).filter(Solicitud.identificacion == identificacion).first()
     if not solicitud:
         logger.warning(f"Solicitud con identificacion {identificacion} no encontrada")
-    logger.info(f"Fetched solicitud: {solicitud}")
-    return solicitud
+    else:
+        logger.info(f"Fetched solicitud: {solicitud.serialize()}")
+    return solicitud.serialize() if solicitud else None
 
 def get_solicitudes(db: Session, skip: int = 0, limit: int = 100):
     logger.info(f"Fetching solicitudes with skip={skip} and limit={limit}")
     solicitudes = db.query(Solicitud).offset(skip).limit(limit).all()
+    solicitudes = [solicitud.serialize() for solicitud in solicitudes]
     logger.info(f"Fetched {len(solicitudes)} solicitudes")
     return solicitudes
 
 def create_solicitud(db: Session, solicitud: SolicitudCreate):
     logger.info(f"Creating new solicitud with data: {solicitud}")
-    db_solicitud = Solicitud(**solicitud.dict(), status_id=2) #default approved (status_id = 2)
+    db_solicitud = Solicitud(**solicitud.dict(), status_id=2) # default approved (status_id = 2)
     try:
         db.add(db_solicitud)
         db.commit()
         db.refresh(db_solicitud)
-        logger.info(f"Created solicitud: {db_solicitud}")
-        return db_solicitud
+        serialized_solicitud = db_solicitud.serialize()
+        logger.info(f"Created solicitud: {serialized_solicitud}")
+        return serialized_solicitud
     except IntegrityError as e:
         db.rollback()
         logger.error(f"Failed to create solicitud due to IntegrityError: {e}")
@@ -57,8 +60,8 @@ def update_solicitud(db: Session, solicitud_id: int, solicitud: SolicitudUpdate)
             setattr(db_solicitud, key, value)
         db.commit()
         db.refresh(db_solicitud)
-        logger.info(f"Updated solicitud: {db_solicitud}")
-        return db_solicitud
+        logger.info(f"Updated solicitud: {db_solicitud.serialize()}")
+        return db_solicitud.serialize()
     except IntegrityError as e:
         db.rollback()
         logger.error(f"Failed to update solicitud due to IntegrityError: {e}")
@@ -77,14 +80,15 @@ def delete_solicitud(db: Session, solicitud_id: int):
     try:
         db.delete(db_solicitud)
         db.commit()
-        logger.info(f"Deleted solicitud: {db_solicitud}")
-        return db_solicitud
+        logger.info(f"Deleted solicitud: {db_solicitud.serialize()}")
+        return db_solicitud.serialize()
     except SQLAlchemyError as e:
         db.rollback()
         logger.error(f"Failed to delete solicitud: {e}")
         raise APIException(status_code=500, detail="Error al eliminar solicitud")
 
-def assign_grimorio(db: Session, solicitud_id: int):
+def assign_grimorio(db: Session, solicitud_data: dict):
+    solicitud_id = solicitud_data['id']
     logger.info(f"Assigning grimorio to solicitud with ID {solicitud_id}")
     db_solicitud = db.query(Solicitud).filter(Solicitud.id == solicitud_id).first()
     if not db_solicitud:
@@ -104,7 +108,7 @@ def assign_grimorio(db: Session, solicitud_id: int):
         db.commit()
         db.refresh(asignacion)
         logger.info(f"Assigned grimorio: {asignacion.serialize()}")
-        return asignacion
+        return asignacion.serialize()
     except APIException as e:
         db.rollback()
         logger.error(f"APIException: {e.detail}")

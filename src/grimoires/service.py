@@ -9,6 +9,7 @@ def get_grimorios(db: Session):
     logger.info("Fetching all grimorios from database")
     try:
         grimorios = db.query(Grimorio).all()
+        grimorios = [grimorio.serialize() for grimorio in grimorios]
         logger.info(f"Fetched {len(grimorios)} grimorios")
         return grimorios
     except SQLAlchemyError as e:
@@ -22,8 +23,8 @@ def get_grimorio(db: Session, grimorio_id: int):
         if not grimorio:
             logger.warning(f"Grimorio con ID {grimorio_id} no encontrado")
             raise APIException(status_code=404, detail="Grimorio no encontrado")
-        logger.info(f"Fetched grimorio: {grimorio}")
-        return grimorio
+        logger.info(f"Fetched grimorio: {grimorio.serialize()}")
+        return grimorio.serialize()
     except SQLAlchemyError as e:
         logger.error(f"Error al obtener grimorio con ID {grimorio_id}: {e}")
         raise APIException(status_code=500, detail="Error al obtener grimorio")
@@ -35,8 +36,8 @@ def create_grimorio(db: Session, grimorio: GrimorioCreate):
         db.add(db_grimorio)
         db.commit()
         db.refresh(db_grimorio)
-        logger.info(f"Created grimorio: {db_grimorio}")
-        return db_grimorio
+        logger.info(f"Created grimorio: {db_grimorio.serialize()}")
+        return db_grimorio.serialize()
     except IntegrityError as e:
         db.rollback()
         logger.error(f"Failed to create grimorio due to IntegrityError: {e}")
@@ -59,8 +60,8 @@ def update_grimorio(db: Session, grimorio_id: int, grimorio_data: GrimorioCreate
 
         db.commit()
         db.refresh(grimorio)
-        logger.info(f"Updated grimorio: {grimorio}")
-        return grimorio
+        logger.info(f"Updated grimorio: {grimorio.serialize()}")
+        return grimorio.serialize()
     except IntegrityError as e:
         db.rollback()
         logger.error(f"Failed to update grimorio due to IntegrityError: {e}")

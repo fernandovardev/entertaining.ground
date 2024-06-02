@@ -22,8 +22,10 @@ async def riddle_form(request: Request):
 async def solve_riddle(request: Request, answer: str = Form(...)):
     if validate_riddle_answer(answer):
         request.session["riddle_solved"] = True
+        logger.info("Riddle solved correctly")
         return templates.TemplateResponse("success.html", {"request": request})
     else:
+        logger.info("Riddle answer incorrect")
         return RedirectResponse(url="/riddle-fail", status_code=303)
 
 @router.get("/riddle-fail", summary="Riddle Failure", response_class=HTMLResponse)
@@ -33,7 +35,5 @@ async def riddle_fail(request: Request):
 
 @router.get("/secure", summary="Secure Page", response_class=HTMLResponse)
 async def secure_page(request: Request, solved: bool = Depends(has_solved_riddle)):
-    if isinstance(solved, RedirectResponse):
-        return solved
     logger.info("Accessed the secure page")
     return templates.TemplateResponse("secure.html", {"request": request})
