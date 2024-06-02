@@ -19,6 +19,17 @@ class SolicitudBase(BaseModel):
     edad: int = Field(..., ge=10, le=99, description="La edad debe ser un entero de dos dígitos, entre 10 y 99.")
     afinidad_magica_id: int
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "nombre": "Gandalf",
+                "apellido": "ElBlanco",
+                "identificacion": "1234567890",
+                "edad": 25,
+                "afinidad_magica_id": 1
+            }
+        }
+
     @validator('nombre')
     def validar_nombre(cls, value):
         if not value:
@@ -62,12 +73,42 @@ class SolicitudCreate(SolicitudBase):
     """
     pass
 
-class SolicitudUpdate(SolicitudBase):
+class SolicitudUpdate(BaseModel):
     """
     La actualización de una solicitud es un acto de refinamiento,
     asegurando que toda la información esté en perfecta armonía.
     """
-    pass
+    nombre: Optional[str] = Field(None, max_length=20, pattern="^[a-zA-Z]+$", description="El nombre debe ser un conjunto de letras.")
+    apellido: Optional[str] = Field(None, max_length=20, pattern="^[a-zA-Z]+$", description="El apellido debe ser un conjunto de letras.")
+    identificacion: Optional[str] = Field(None, max_length=10, description="La identificación debe ser única y tener un máximo de 10 caracteres.")
+    edad: Optional[int] = Field(None, ge=10, le=99, description="La edad debe ser un entero de dos dígitos, entre 10 y 99.")
+    afinidad_magica_id: Optional[int]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "nombre": "Maria",
+                "apellido": "Gomez",
+                "identificacion": "0987654321",
+                "edad": 30,
+                "afinidad_magica_id": 2
+            }
+        }
+
+    @validator('nombre', 'apellido', 'identificacion', 'edad', 'afinidad_magica_id', pre=True, each_item=True)
+    def validar_opcional(cls, value, field):
+        if value is None:
+            return value
+        if field.name == 'nombre' or field.name == 'apellido':
+            if not value.isalpha():
+                raise CustomValidationError(detail=f"El {field.name} debe contener solo letras.")
+        if field.name == 'identificacion' and len(value) > 10:
+            raise CustomValidationError(detail="La identificación no debe exceder los 10 caracteres.")
+        if field.name == 'edad' and (value < 10 or value > 99):
+            raise CustomValidationError(detail="La edad debe estar entre 10 y 99 años.")
+        if field.name == 'afinidad_magica_id' and value <= 0:
+            raise CustomValidationError(detail="Cada aprendiz debe poseer una afinidad mágica válida.")
+        return value
 
 class SolicitudStatusUpdate(BaseModel):
     """
@@ -78,6 +119,13 @@ class SolicitudStatusUpdate(BaseModel):
         status (int): Nuevo estado de la solicitud, reflejo de su evolución.
     """
     status: int
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "status": 1
+            }
+        }
 
 class Asignacion(BaseModel):
     """

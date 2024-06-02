@@ -49,14 +49,14 @@ def create_solicitud(db: Session, solicitud: SolicitudCreate):
         logger.error(f"Failed to create solicitud: {e}")
         raise APIException(status_code=500, detail="Error al crear solicitud")
 
-def update_solicitud(db: Session, solicitud_id: int, solicitud: SolicitudUpdate):
-    logger.info(f"Updating solicitud with ID {solicitud_id} with data: {solicitud}")
+def update_solicitud(db: Session, solicitud_id: int, solicitud_data: SolicitudUpdate):
+    logger.info(f"Updating solicitud with ID {solicitud_id} with data: {solicitud_data}")
     db_solicitud = db.query(Solicitud).filter(Solicitud.id == solicitud_id).first()
     if not db_solicitud:
         logger.warning(f"Solicitud con ID {solicitud_id} no encontrada")
         raise APIException(status_code=404, detail="Solicitud no encontrada")
     try:
-        for key, value in solicitud.dict().items():
+        for key, value in solicitud_data.dict(exclude_unset=True).items():
             setattr(db_solicitud, key, value)
         db.commit()
         db.refresh(db_solicitud)
@@ -70,7 +70,7 @@ def update_solicitud(db: Session, solicitud_id: int, solicitud: SolicitudUpdate)
         db.rollback()
         logger.error(f"Failed to update solicitud: {e}")
         raise APIException(status_code=500, detail="Error al actualizar solicitud")
-
+    
 def delete_solicitud(db: Session, solicitud_id: int):
     logger.info(f"Deleting solicitud with ID {solicitud_id}")
     db_solicitud = db.query(Solicitud).filter(Solicitud.id == solicitud_id).first()

@@ -30,7 +30,7 @@ def update_solicitud(id: int, solicitud: schemas.SolicitudUpdate, db: Session = 
         db_solicitud = service.get_solicitud(db, solicitud_id=id)
         if not db_solicitud:
             raise APIException(status_code=404, detail="Solicitud no encontrada")
-        return service.update_solicitud(db=db, solicitud_id=id, solicitud=solicitud)
+        return service.update_solicitud(db=db, solicitud_id=id, solicitud_data=solicitud)
     except APIException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
     except CustomValidationError as e:

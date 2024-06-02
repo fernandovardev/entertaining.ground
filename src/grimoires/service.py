@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from ..models import Grimorio
+from ..models import *
 from .schemas import GrimorioCreate
 from ..logger import logger, APIException
 
@@ -70,3 +70,13 @@ def update_grimorio(db: Session, grimorio_id: int, grimorio_data: GrimorioCreate
         db.rollback()
         logger.error(f"Failed to update grimorio: {e}")
         raise APIException(status_code=500, detail="Error al actualizar grimorio")
+
+def get_grimorio_by_solicitud_id(db: Session, solicitud_id: int):
+    logger.info(f"Fetching grimorio for solicitud ID {solicitud_id}")
+    asignacion = db.query(Asignacion).filter(Asignacion.solicitud_id == solicitud_id).first()
+    if not asignacion:
+        logger.warning(f"No grimorio found for solicitud ID {solicitud_id}")
+        raise APIException(status_code=404, detail="Grimorio no encontrado")
+    grimorio = db.query(Grimorio).filter(Grimorio.id == asignacion.grimorio_id).first()
+    logger.info(f"Fetched grimorio: {grimorio.serialize()}")
+    return grimorio.serialize()

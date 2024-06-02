@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>¡Felicidades!</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .pergamino {
+            background: url('/static/images/pergamino-bg.jpg') no-repeat center center;
+            background-size: cover;
+            padding: 30px;
+            border: 8px solid #8B4513;
+            border-radius: 15px;
+            text-align: center;
+            font-family: 'Papyrus', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .pergamino h1 {
+            font-size: 2.5em;
+            color: #8B0000;
+            margin-bottom: 20px;
+        }
+        .pergamino img {
+            max-width: 300px;
+            margin: 20px auto;
+        }
+        .pergamino p {
+            font-size: 1.3em;
+            color: #000;
+            margin-bottom: 15px;
+        }
+        .pergamino p.italic {
+            font-style: italic;
+        }
+        .book-image {
+            max-width: 400px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pergamino">
+        <h1>FELICIDADES, BIENVENIDO AL GREMIO DE LA MAGIA</h1>
+        <img src="/static/images/wizard.png" alt="Wizard Image">
+        <p class="italic">De la nada, un poderoso mago apareció...</p>
+        <p class="italic">El aire se llenó de energía y entonces un grimorio flotó hacia ti.</p>
+        <p>Con una voz profunda y resonante, el mago dijo:</p>
+        <p><strong>"{{ grimorio.tipo }}"</strong></p>
+        <img class="book-image" src="/static/images/BOOK_{{ grimorio.id }}.png" alt="Grimorio Image">
+        <p>Este no es un libro cualquiera. Este es tu guía, tu compañero, y tu maestro en el camino de la magia. Cuídalo bien y él te revelará sus secretos, aquellos que solo los dignos pueden conocer.</p>
+        <p>Nombre: {{ solicitud.nombre }}</p>
+        <p>Apellido: {{ solicitud.apellido }}</p>
+        <p>Identificación: {{ solicitud.identificacion }}</p>
+        <p>Edad: {{ solicitud.edad }}</p>
+        <p>Que tu viaje en el mundo arcano esté lleno de descubrimientos y sabiduría. Bienvenido al gremio, joven hechicero.</p>
+    </div>
+</body>
+</html>

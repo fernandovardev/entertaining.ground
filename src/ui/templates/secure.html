@@ -7,13 +7,24 @@
         async function fetchAfinidades() {
             const response = await fetch('/api/afinidades/');
             const data = await response.json();
-            const select = document.getElementById('afinidad_magica_id');
+            const container = document.getElementById('afinidad_magica_container');
             data.forEach(afinidad => {
-                const option = document.createElement('option');
-                option.value = afinidad.id;
-                option.textContent = afinidad.nombre;
-                select.appendChild(option);
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'afinidad-button';
+                button.value = afinidad.id;
+                button.innerHTML = `<img src="./static/icons/${afinidad.nombre}.png" alt="${afinidad.nombre} icon" /> ${afinidad.nombre}`;
+                button.addEventListener('click', () => selectAfinidad(afinidad.id));
+                container.appendChild(button);
             });
+        }
+
+        function selectAfinidad(id) {
+            const selected = document.getElementById('afinidad_magica_id');
+            selected.value = id;
+            const buttons = document.querySelectorAll('.afinidad-button');
+            buttons.forEach(button => button.classList.remove('selected'));
+            document.querySelector(`button[value="${id}"]`).classList.add('selected');
         }
 
         async function handleSubmit(event) {
@@ -21,11 +32,15 @@
             const form = event.target;
             const formData = new FormData(form);
             const data = {};
-
+        
             formData.forEach((value, key) => {
-                data[key] = value.trim() !== "" ? value : null;
+                if (key === 'edad') {
+                    data[key] = value.trim() !== "" ? parseInt(value) : 0;
+                } else {
+                    data[key] = value.trim() !== "" ? value : "";
+                }
             });
-
+        
             const response = await fetch('/api/solicitudes/', {
                 method: 'POST',
                 headers: {
@@ -33,18 +48,41 @@
                 },
                 body: JSON.stringify(data),
             });
-
+        
             if (response.ok) {
-                alert('Solicitud enviada exitosamente.');
-                form.reset();
+                const responseData = await response.json();
+                window.location.href = `/congratulations/${responseData.id}`;
             } else {
                 const errorData = await response.json();
                 alert('Error al enviar solicitud: ' + errorData.detail);
             }
         }
+        
 
         document.addEventListener('DOMContentLoaded', fetchAfinidades);
     </script>
+    <style>
+        .afinidad-button {
+            display: inline-block;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        .afinidad-button img {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .afinidad-button.selected {
+            border-color: #007bff;
+            background-color: #e7f3ff;
+        }
+    </style>
 </head>
 <body>
     <div class="pergamino">
@@ -52,21 +90,22 @@
         <p>Has demostrado tu sabiduría al resolver el acertijo. Ahora tienes acceso a los secretos mejor guardados.</p>
         <form id="solicitudForm" onsubmit="handleSubmit(event)">
             <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required>
+            <input type="text" id="nombre" name="nombre">
             
             <label for="apellido">Apellido:</label>
-            <input type="text" id="apellido" name="apellido" required>
+            <input type="text" id="apellido" name="apellido">
             
             <label for="identificacion">Identificación:</label>
-            <input type="text" id="identificacion" name="identificacion" required>
+            <input type="text" id="identificacion" name="identificacion">
             
             <label for="edad">Edad:</label>
-            <input type="number" id="edad" name="edad" required>
+            <input type="number" id="edad" name="edad" min="10" max="99">
             
             <label for="afinidad_magica_id">Afinidad Mágica:</label>
-            <select id="afinidad_magica_id" name="afinidad_magica_id" required>
-                <!-- Options will be populated by fetchAfinidades() -->
-            </select>
+            <div id="afinidad_magica_container">
+                <!-- Buttons will be populated by fetchAfinidades() -->
+            </div>
+            <input type="hidden" id="afinidad_magica_id" name="afinidad_magica_id">
             
             <button type="submit" class="boton">Enviar Solicitud</button>
         </form>
