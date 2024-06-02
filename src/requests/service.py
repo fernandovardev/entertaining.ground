@@ -117,3 +117,20 @@ def assign_grimorio(db: Session, solicitud_data: dict):
         db.rollback()
         logger.error(f"Failed to assign grimorio: {e}")
         raise APIException(status_code=500, detail="Error al asignar grimorio")
+
+def update_solicitud_status(db: Session, solicitud_id: int, status_id: int):
+    logger.info(f"Updating status of solicitud with ID {solicitud_id} to {status_id}")
+    db_solicitud = db.query(Solicitud).filter(Solicitud.id == solicitud_id).first()
+    if not db_solicitud:
+        logger.warning(f"Solicitud con ID {solicitud_id} no encontrada")
+        raise APIException(status_code=404, detail="Solicitud no encontrada")
+    try:
+        db_solicitud.status_id = status_id
+        db.commit()
+        db.refresh(db_solicitud)
+        logger.info(f"Updated solicitud status: {db_solicitud.serialize()}")
+        return db_solicitud.serialize()
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(f"Failed to update solicitud status: {e}")
+        raise APIException(status_code=500, detail="Error al actualizar estado de solicitud")

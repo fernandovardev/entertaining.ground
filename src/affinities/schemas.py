@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-
+from pydantic import BaseModel, Field
+from typing import Optional
 class AfinidadMagicaBase(BaseModel):
     """
     En el vasto océano de la magia, cada mago debe tener una afinidad,
@@ -8,8 +8,16 @@ class AfinidadMagicaBase(BaseModel):
     Atributos:
         nombre (str): El nombre de la afinidad mágica, un reflejo de su esencia.
     """
-    id: int
+    id: Optional[int] = Field(None, description="The unique identifier of the afinidad")
     nombre: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": 1,
+                "nombre": "Fuego"
+            }
+        }
 
 class AfinidadMagicaCreate(AfinidadMagicaBase):
     """
@@ -31,3 +39,6 @@ class AfinidadMagica(AfinidadMagicaBase):
     class Config:
         from_attributes = True
 
+class AfinidadUpdate(BaseModel):
+    nombre: str
+    id: Optional[int] = Field(None, description="The unique identifier of the afinidad")

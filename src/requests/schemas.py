@@ -23,7 +23,7 @@ class SolicitudBase(BaseModel):
         schema_extra = {
             "example": {
                 "nombre": "Gandalf",
-                "apellido": "El",
+                "apellido": "ElBlanco",
                 "identificacion": "1234567890",
                 "edad": 25,
                 "afinidad_magica_id": 1
@@ -118,7 +118,7 @@ class SolicitudStatusUpdate(BaseModel):
     Atributos:
         status (int): Nuevo estado de la solicitud, reflejo de su evolución.
     """
-    status: int
+    status_id: int
 
     class Config:
         schema_extra = {

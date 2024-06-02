@@ -41,7 +41,7 @@ def create_afinidad(afinidad: schemas.AfinidadMagicaCreate, db: Session = Depend
         logger.error(f"Excepción no manejada: {e}")
         raise HTTPException(status_code=500, detail="Error Interno del Servidor")
 
-@router.put("/afinidades/{afinidad_id}", response_model=schemas.AfinidadMagica, summary="Actualizar Afinidad Mágica por ID", description="Actualiza los detalles de una afinidad mágica existente por su ID.")
+@router.put("/afinidades/{afinidad_id}", response_model=schemas.AfinidadUpdate, summary="Actualizar Afinidad Mágica por ID", description="Actualiza los detalles de una afinidad mágica existente por su ID.")
 def update_afinidad(afinidad_id: int, afinidad: schemas.AfinidadMagicaCreate, db: Session = Depends(get_db)):
     logger.info(f"Solicitud para actualizar afinidad mágica con ID {afinidad_id} con datos: {afinidad}")
     try:

@@ -14,6 +14,15 @@ class GrimorioBase(BaseModel):
     rareza: str
     peso: int
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "tipo": "Libro de Hechizos",
+                "rareza": "Raro",
+                "peso": 500
+            }
+        }
+
 class GrimorioCreate(GrimorioBase):
     """
     Crear un nuevo grimorio es como forjar un arma de sabiduría y poder,
@@ -21,7 +30,7 @@ class GrimorioCreate(GrimorioBase):
     """
     pass
 
-class Grimorio(GrimorioBase):
+class Grimorio(BaseModel):
     """
     Cada grimorio debe ser único, conocido por su nombre y registro,
     para asegurar que su conocimiento no se pierda en las brumas del tiempo.
@@ -33,4 +42,3 @@ class Grimorio(GrimorioBase):
 
     class Config:
         from_attributes = True
-
