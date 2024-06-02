@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, declarative_base
-from src.database import engine
 
 Base = declarative_base()
 
@@ -11,6 +10,12 @@ class Status(Base):
     name = Column(String(20), unique=True, nullable=False)
     
     solicitudes = relationship("Solicitud", back_populates="status")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
 
 class Solicitud(Base):
     __tablename__ = "solicitudes"
@@ -23,9 +28,20 @@ class Solicitud(Base):
     afinidad_magica_id = Column(Integer, ForeignKey('afinidades_magicas.id'))
     status_id = Column(Integer, ForeignKey('status.id'))
 
-    afinidad_magica = relationship("AfinidadMagica")
-    status = relationship("Status")
+    afinidad_magica = relationship("AfinidadMagica", back_populates="solicitudes")
+    status = relationship("Status", back_populates="solicitudes")
     assignments = relationship("Asignacion", back_populates="solicitud")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "apellido": self.apellido,
+            "identificacion": self.identificacion,
+            "edad": self.edad,
+            "afinidad_magica_id": self.afinidad_magica_id,
+            "status_id": self.status_id
+        }
 
 class AfinidadMagica(Base):
     __tablename__ = "afinidades_magicas"
@@ -34,6 +50,12 @@ class AfinidadMagica(Base):
     nombre = Column(String(20), unique=True, nullable=False)
     
     solicitudes = relationship("Solicitud", back_populates="afinidad_magica")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre
+        }
 
 class Grimorio(Base):
     __tablename__ = "grimorios"
@@ -45,6 +67,14 @@ class Grimorio(Base):
 
     assignments = relationship("Asignacion", back_populates="grimorio")
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "tipo": self.tipo,
+            "rareza": self.rareza,
+            "peso": self.peso
+        }
+
 class Asignacion(Base):
     __tablename__ = "asignaciones"
 
@@ -53,4 +83,12 @@ class Asignacion(Base):
     grimorio_id = Column(Integer, ForeignKey('grimorios.id'))
 
     solicitud = relationship("Solicitud", back_populates="assignments")
-    grimorio = relationship("Grimorio")
+    grimorio = relationship("Grimorio", back_populates="assignments")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "solicitud_id": self.solicitud_id,
+            "grimorio_id": self.grimorio_id,
+            "grimorio": self.grimorio.serialize()
+        }

@@ -30,7 +30,7 @@ def get_solicitudes(db: Session, skip: int = 0, limit: int = 100):
 
 def create_solicitud(db: Session, solicitud: SolicitudCreate):
     logger.info(f"Creating new solicitud with data: {solicitud}")
-    db_solicitud = Solicitud(**solicitud.dict(), status_id=1)
+    db_solicitud = Solicitud(**solicitud.dict(), status_id=2) #default approved (status_id = 2)
     try:
         db.add(db_solicitud)
         db.commit()
@@ -95,13 +95,15 @@ def assign_grimorio(db: Session, solicitud_id: int):
         if not grimorios:
             logger.warning("No grimorios available")
             raise APIException(status_code=400, detail="No hay grimorios disponibles")
-        
-        grimorio = random.choice(grimorios)
-        asignacion = Asignacion(solicitud_id=solicitud_id, grimorio_id=grimorio.id)
+        serialized_grimorios = [grimorio.serialize() for grimorio in grimorios]
+        logger.info(f"Assignable grimorios: {serialized_grimorios}")
+        weights = [grimorio.peso for grimorio in grimorios]
+        selected_grimorio = random.choices(grimorios, weights=weights, k=1)[0]
+        asignacion = Asignacion(solicitud_id=solicitud_id, grimorio_id=selected_grimorio.id)
         db.add(asignacion)
         db.commit()
         db.refresh(asignacion)
-        logger.info(f"Assigned grimorio: {asignacion}")
+        logger.info(f"Assigned grimorio: {asignacion.serialize()}")
         return asignacion
     except APIException as e:
         db.rollback()
