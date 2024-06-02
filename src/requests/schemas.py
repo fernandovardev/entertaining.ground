@@ -23,7 +23,7 @@ class SolicitudBase(BaseModel):
         schema_extra = {
             "example": {
                 "nombre": "Gandalf",
-                "apellido": "ElBlanco",
+                "apellido": "El",
                 "identificacion": "1234567890",
                 "edad": 25,
                 "afinidad_magica_id": 1

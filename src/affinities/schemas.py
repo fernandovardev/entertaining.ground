@@ -11,14 +11,6 @@ class AfinidadMagicaBase(BaseModel):
     id: int
     nombre: str
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "id": 1,
-                "nombre": "Fuego"
-            }
-        }
-
 class AfinidadMagicaCreate(AfinidadMagicaBase):
     """
     Cuando un nuevo aprendiz es admitido en nuestras sagradas filas,
