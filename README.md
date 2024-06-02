@@ -1,42 +1,41 @@
-```markdown
-# FastAPI Project
+# Proyecto FastAPI
 
-## Introduction
-Welcome to the FastAPI project. This project provides an API for managing magical affinities, grimoires, and student requests. This README will guide you through setting up and using the API.
+## Introducción
+Bienvenido al proyecto FastAPI. Este proyecto proporciona una API para gestionar afinidades mágicas, grimorios y solicitudes de estudiantes. Este README te guiará a través de la configuración y uso de la API.
 
-## Installation
+## Instalación
 
-1. **Clone the Repository:**
+1. **Clonar el Repositorio:**
     ```bash
     git clone <repository_url>
     cd <repository_directory>
     ```
 
-2. **Create a Virtual Environment:**
+2. **Crear un Entorno Virtual:**
     ```bash
     python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    source venv/bin/activate  # En Windows usa `venv\Scripts\activate`
     ```
 
-3. **Install Dependencies:**
+3. **Instalar Dependencias:**
     ```bash
     pip install -r requirements.txt
     ```
 
-4. **Run the Application:**
+4. **Ejecutar la Aplicación:**
     ```bash
     uvicorn src.main:app --reload
     ```
 
-## API Endpoints
+## Endpoints de la API
 
 ### 1. Afinidades Mágicas
 
 #### Obtener todas las Afinidades Mágicas
 - **Endpoint:** `/api/afinidades/`
-- **Method:** `GET`
-- **Description:** Obtiene todas las afinidades mágicas disponibles en la base de datos.
-- **Response:**
+- **Método:** `GET`
+- **Descripción:** Obtiene todas las afinidades mágicas disponibles en la base de datos.
+- **Respuesta:**
   ```json
   [
     {
@@ -49,16 +48,16 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Crear Nueva Afinidad Mágica
 - **Endpoint:** `/api/afinidades/`
-- **Method:** `POST`
-- **Description:** Crea una nueva afinidad mágica con los datos proporcionados.
-- **Request Body:**
+- **Método:** `POST`
+- **Descripción:** Crea una nueva afinidad mágica con los datos proporcionados.
+- **Cuerpo de la Solicitud:**
   ```json
   {
     "id": 2,
     "nombre": "Agua"
   }
   ```
-- **Response:**
+- **Respuesta:**
   ```json
   {
     "id": 2,
@@ -68,11 +67,11 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Obtener Afinidad Mágica por ID
 - **Endpoint:** `/api/afinidades/{afinidad_id}`
-- **Method:** `GET`
-- **Description:** Obtiene una afinidad mágica por su ID único.
-- **Parameters:**
-  - `afinidad_id` (integer, required): ID de la afinidad mágica.
-- **Response:**
+- **Método:** `GET`
+- **Descripción:** Obtiene una afinidad mágica por su ID único.
+- **Parámetros:**
+  - `afinidad_id` (entero, requerido): ID de la afinidad mágica.
+- **Respuesta:**
   ```json
   {
     "id": 1,
@@ -82,18 +81,18 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Actualizar Afinidad Mágica por ID
 - **Endpoint:** `/api/afinidades/{afinidad_id}`
-- **Method:** `PUT`
-- **Description:** Actualiza los detalles de una afinidad mágica existente por su ID.
-- **Parameters:**
-  - `afinidad_id` (integer, required): ID de la afinidad mágica.
-- **Request Body:**
+- **Método:** `PUT`
+- **Descripción:** Actualiza los detalles de una afinidad mágica existente por su ID.
+- **Parámetros:**
+  - `afinidad_id` (entero, requerido): ID de la afinidad mágica.
+- **Cuerpo de la Solicitud:**
   ```json
   {
     "id": 1,
     "nombre": "Fuego"
   }
   ```
-- **Response:**
+- **Respuesta:**
   ```json
   {
     "id": 1,
@@ -105,9 +104,9 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Obtener todos los Grimorios
 - **Endpoint:** `/api/grimorios/`
-- **Method:** `GET`
-- **Description:** Obtiene todos los grimorios disponibles en la base de datos.
-- **Response:**
+- **Método:** `GET`
+- **Descripción:** Obtiene todos los grimorios disponibles en la base de datos.
+- **Respuesta:**
   ```json
   [
     {
@@ -122,9 +121,9 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Crear Nuevo Grimorio
 - **Endpoint:** `/api/grimorios/`
-- **Method:** `POST`
-- **Description:** Crea un nuevo grimorio con los datos proporcionados.
-- **Request Body:**
+- **Método:** `POST`
+- **Descripción:** Crea un nuevo grimorio con los datos proporcionados.
+- **Cuerpo de la Solicitud:**
   ```json
   {
     "tipo": "Grimorio de Agua",
@@ -132,7 +131,7 @@ Welcome to the FastAPI project. This project provides an API for managing magica
     "peso": 2
   }
   ```
-- **Response:**
+- **Respuesta:**
   ```json
   {
     "id": 2,
@@ -144,11 +143,11 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Obtener Grimorio por ID
 - **Endpoint:** `/api/grimorios/{grimorio_id}`
-- **Method:** `GET`
-- **Description:** Obtiene un grimorio por su ID único.
-- **Parameters:**
-  - `grimorio_id` (integer, required): ID del grimorio.
-- **Response:**
+- **Método:** `GET`
+- **Descripción:** Obtiene un grimorio por su ID único.
+- **Parámetros:**
+  - `grimorio_id` (entero, requerido): ID del grimorio.
+- **Respuesta:**
   ```json
   {
     "id": 1,
@@ -160,11 +159,11 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Actualizar Grimorio por ID
 - **Endpoint:** `/api/grimorios/{grimorio_id}`
-- **Method:** `PUT`
-- **Description:** Actualiza los detalles de un grimorio existente por su ID.
-- **Parameters:**
-  - `grimorio_id` (integer, required): ID del grimorio.
-- **Request Body:**
+- **Método:** `PUT`
+- **Descripción:** Actualiza los detalles de un grimorio existente por su ID.
+- **Parámetros:**
+  - `grimorio_id` (entero, requerido): ID del grimorio.
+- **Cuerpo de la Solicitud:**
   ```json
   {
     "tipo": "Grimorio de Agua",
@@ -172,7 +171,7 @@ Welcome to the FastAPI project. This project provides an API for managing magica
     "peso": 2
   }
   ```
-- **Response:**
+- **Respuesta:**
   ```json
   {
     "id": 2,
@@ -186,12 +185,12 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Obtener todas las Solicitudes
 - **Endpoint:** `/api/solicitudes/`
-- **Method:** `GET`
-- **Description:** Obtiene todas las solicitudes con opción de paginación.
-- **Parameters:**
-  - `skip` (integer, optional): Número de registros a omitir (por defecto 0).
-  - `limit` (integer, optional): Número máximo de registros a devolver (por defecto 100).
-- **Response:**
+- **Método:** `GET`
+- **Descripción:** Obtiene todas las solicitudes con opción de paginación.
+- **Parámetros:**
+  - `skip` (entero, opcional): Número de registros a omitir (por defecto 0).
+  - `limit` (entero, opcional): Número máximo de registros a devolver (por defecto 100).
+- **Respuesta:**
   ```json
   [
     {
@@ -210,9 +209,9 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Crear Nueva Solicitud
 - **Endpoint:** `/api/solicitudes/`
-- **Method:** `POST`
-- **Description:** Crea una nueva solicitud con los datos proporcionados.
-- **Request Body:**
+- **Método:** `POST`
+- **Descripción:** Crea una nueva solicitud con los datos proporcionados.
+- **Cuerpo de la Solicitud:**
   ```json
   {
     "nombre": "Gandalf",
@@ -222,7 +221,7 @@ Welcome to the FastAPI project. This project provides an API for managing magica
     "afinidad_magica_id": 1
   }
   ```
-- **Response:**
+- **Respuesta:**
   ```json
   {
     "id": 1,
@@ -238,11 +237,11 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Actualizar Solicitud por ID
 - **Endpoint:** `/api/solicitudes/{id}`
-- **Method:** `PUT`
-- **Description:** Actualiza los detalles de una solicitud existente por su ID.
-- **Parameters:**
-  - `id` (integer, required): ID de la solicitud.
-- **Request Body:**
+- **Método:** `PUT`
+- **Descripción:** Actualiza los detalles de una solicitud existente por su ID.
+- **Parámetros:**
+  - `id` (entero, requerido): ID de la solicitud.
+- **Cuerpo de la Solicitud:**
   ```json
   {
     "nombre": "Maria",
@@ -252,7 +251,7 @@ Welcome to the FastAPI project. This project provides an API for managing magica
     "afinidad_magica_id": 2
   }
   ```
-- **Response:**
+- **Respuesta:**
   ```json
   {
     "id": 1,
@@ -268,11 +267,11 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Eliminar Solicitud por ID
 - **Endpoint:** `/api/solicitudes/{id}`
-- **Method:** `DELETE`
-- **Description:** Elimina una solicitud existente por su ID.
-- **Parameters:**
-  - `id` (integer, required): ID de la solicitud.
-- **Response:**
+- **Método:** `DELETE`
+- **Descripción:** Elimina una solicitud existente por su ID.
+- **Parámetros:**
+  - `id` (entero, requerido): ID de la solicitud.
+- **Respuesta:**
   ```json
   {
     "id": 1,
@@ -288,20 +287,22 @@ Welcome to the FastAPI project. This project provides an API for managing magica
 
 #### Actualizar Estado de la Solicitud
 - **Endpoint:** `/api/solicitudes/{id}/estatus`
-- **Method:** `PATCH`
-- **Description:** Actualiza el estado de una solicitud existente por su ID.
-- **Parameters:**
-  - `id` (integer, required): ID de la solicitud.
-- **Request Body:**
+- **Método:** `PATCH`
+- **Descripción:** Actualiza el estado de una solicitud existente por su ID.
+- **Parámetros:**
+  - `id` (entero, requerido): ID de la solicitud.
+- **Cuerpo de la Solicitud:**
   ```json
   {
     "status": 2
   }
   ```
-- **Response:**
+- **Respuesta:**
   ```json
   {
-    "id": 1,
+   
+
+ "id": 1,
     "nombre": "Gandalf",
     "apellido": "El",
     "identificacion": "1234567890",
@@ -312,15 +313,13 @@ Welcome to the FastAPI project. This project provides an API for managing magica
   }
   ```
 
-### 4. Miscellaneous Endpoints
+### 4. Endpoints Misceláneos
 
-#### Welcome to the Project
-- **
-
-Endpoint:** `/`
-- **Method:** `GET`
-- **Description:** Página de bienvenida del proyecto.
-- **Response:**
+#### Bienvenido al Proyecto
+- **Endpoint:** `/`
+- **Método:** `GET`
+- **Descripción:** Página de bienvenida del proyecto.
+- **Respuesta:**
   ```html
   <html>
     <body>
@@ -329,11 +328,11 @@ Endpoint:** `/`
   </html>
   ```
 
-#### Riddle Authentication
+#### Autenticación por Acertijo
 - **Endpoint:** `/riddle`
-- **Method:** `GET`
-- **Description:** Página de autenticación mediante acertijo.
-- **Response:**
+- **Método:** `GET`
+- **Descripción:** Página de autenticación mediante acertijo.
+- **Respuesta:**
   ```html
   <html>
     <body>
@@ -348,15 +347,15 @@ Endpoint:** `/`
   ```
 
 - **Endpoint:** `/riddle`
-- **Method:** `POST`
-- **Description:** Validación de respuesta al acertijo.
-- **Request Body:**
+- **Método:** `POST`
+- **Descripción:** Validación de respuesta al acertijo.
+- **Cuerpo de la Solicitud:**
   ```json
   {
     "answer": "respuesta"
   }
   ```
-- **Response:**
+- **Respuesta:**
   ```html
   <html>
     <body>
@@ -365,11 +364,11 @@ Endpoint:** `/`
   </html>
   ```
 
-#### Riddle Failure
+#### Fallo en el Acertijo
 - **Endpoint:** `/riddle-fail`
-- **Method:** `GET`
-- **Description:** Página de fallo en la autenticación mediante acertijo.
-- **Response:**
+- **Método:** `GET`
+- **Descripción:** Página de fallo en la autenticación mediante acertijo.
+- **Respuesta:**
   ```html
   <html>
     <body>
@@ -378,11 +377,11 @@ Endpoint:** `/`
   </html>
   ```
 
-#### Secure Page
+#### Página Segura
 - **Endpoint:** `/secure`
-- **Method:** `GET`
-- **Description:** Página segura del proyecto.
-- **Response:**
+- **Método:** `GET`
+- **Descripción:** Página segura del proyecto.
+- **Respuesta:**
   ```html
   <html>
     <body>
@@ -391,13 +390,13 @@ Endpoint:** `/`
   </html>
   ```
 
-#### Congratulations Page
+#### Página de Felicitaciones
 - **Endpoint:** `/congratulations/{solicitud_id}`
-- **Method:** `GET`
-- **Description:** Página de felicitación después de resolver un acertijo.
-- **Parameters:**
-  - `solicitud_id` (integer, required): ID de la solicitud.
-- **Response:**
+- **Método:** `GET`
+- **Descripción:** Página de felicitación después de resolver un acertijo.
+- **Parámetros:**
+  - `solicitud_id` (entero, requerido): ID de la solicitud.
+- **Respuesta:**
   ```html
   <html>
     <body>
